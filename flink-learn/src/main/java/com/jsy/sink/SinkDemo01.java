@@ -22,9 +22,15 @@ public class SinkDemo01 {
         //TODO 2.transformation
         //TODO 3.sink
         ds.print();
+        // print参数是输出标识
         ds.print("输出标识");
         ds.printToErr();//会在控制台上以红色输出
         ds.printToErr("输出标识");//会在控制台上以红色输出
+        /**
+         * 在输出到path的时候,可以在前面设置并行度,如果
+         * 并行度>1,则path为目录
+         * 并行度=1,则path为文件名
+         */
         ds.writeAsText("data/output/result1").setParallelism(1);
         ds.writeAsText("data/output/result2").setParallelism(2);
 
