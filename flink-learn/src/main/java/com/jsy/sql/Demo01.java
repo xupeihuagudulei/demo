@@ -15,8 +15,8 @@ import java.util.Arrays;
 import static org.apache.flink.table.api.Expressions.$;
 
 /**
- * Flink Table&SQL 案例- 将DataStream数据转Table和View然后使用sql进行统计查询
- *
+ * Flink Table&SQL 案例 - 将DataStream数据转Table和View然后使用sql进行统计查询
+ * <p>
  * - 依赖
  * https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/
  * 程序结构  官网示例
@@ -29,7 +29,7 @@ public class Demo01 {
     public static void main(String[] args) throws Exception {
         //TODO 0.env
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
+        EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();// 默认就是blink，流模式
         StreamTableEnvironment tenv = StreamTableEnvironment.create(env, settings);
 
         //TODO 1.source
@@ -45,11 +45,12 @@ public class Demo01 {
 
         //TODO 2.transformation
         // 将DataStream数据转Table和View,然后查询
-        Table tableA = tenv.fromDataStream(orderA, $("user"), $("product"), $("amount"));
+        // Expression 表达式  在内存里搞了个表  tableA
+        Table tableA = tenv.fromDataStream(orderA, $("user"), $("product"), $("amount"));  // ds 风格
         tableA.printSchema();
         System.out.println(tableA);
 
-        tenv.createTemporaryView("tableB", orderB, $("user"), $("product"), $("amount"));
+        tenv.createTemporaryView("tableB", orderB, $("user"), $("product"), $("amount")); // sql 风格
 
         //查询:tableA中amount>2的和tableB中amount>1的数据最后合并
         /*
@@ -57,7 +58,7 @@ select * from tableA where amount > 2
 union
  select * from tableB where amount > 1
          */
-        String sql = "select * from "+tableA+" where amount > 2 \n" +
+        String sql = "select * from " + tableA + " where amount > 2 \n" + // 没有tableA表 ，只有tableA变量，从tableA变量里查
                 "union \n" +
                 " select * from tableB where amount > 1";
 
@@ -65,9 +66,8 @@ union
         resultTable.printSchema();
         System.out.println(resultTable);//UnnamedTable$1
 
-
         //将Table转为DataStream
-        //DataStream<Order> resultDS = tenv.toAppendStream(resultTable, Order.class);//union all使用toAppendStream
+        // DataStream<Order> resultDS = tenv.toAppendStream(resultTable, Order.class);//union all使用toAppendStream
         DataStream<Tuple2<Boolean, Order>> resultDS = tenv.toRetractStream(resultTable, Order.class);//union使用toRetractStream
         //toAppendStream → 将计算后的数据append到结果DataStream中去
         //toRetractStream  → 将计算后的新的数据在DataStream原数据的基础上更新true或是删除false
@@ -79,6 +79,7 @@ union
         //TODO 4.execute
         env.execute();
     }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
