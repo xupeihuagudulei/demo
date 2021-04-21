@@ -74,11 +74,11 @@ public class BroadcastStateDemo {
         //BroadcastProcessFunction<IN1, IN2, OUT>
         SingleOutputStreamOperator<Tuple6<String, String, String, Integer, String, Integer>> result =
                 connectDS.process(new BroadcastProcessFunction<
-                        //<userID, eventTime, eventType, productID> //事件流
+                        //<userID, eventTime, eventType, productID> // todo 事件流
                         Tuple4<String, String, String, Integer>,
-                        //<用户id,<姓名,年龄>> //广播流
+                        //<用户id,<姓名,年龄>> // todo 广播流
                         Map<String, Tuple2<String, Integer>>,
-                        //<用户id，eventTime，eventType，productID，姓名，年龄> //结果流 需要收集的数据
+                        //<用户id，eventTime，eventType，productID，姓名，年龄> // todo 结果流 需要收集的数据
                         Tuple6<String, String, String, Integer, String, Integer>
                         >() {
                     //处理事件流中的每一个元素
@@ -111,7 +111,8 @@ public class BroadcastStateDemo {
 
                     //更新处理广播流中的数据
                     @Override
-                    public void processBroadcastElement(Map<String, Tuple2<String, Integer>> value, Context ctx, Collector<Tuple6<String, String, String, Integer, String, Integer>> out) throws Exception {
+                    public void processBroadcastElement(Map<String, Tuple2<String, Integer>> value, Context ctx,
+                                                        Collector<Tuple6<String, String, String, Integer, String, Integer>> out) throws Exception {
                         //value就是从MySQL中每隔5是查询出来并广播到状态中的最新数据!
                         //要把最新的数据放到state中
                         BroadcastState<Void, Map<String, Tuple2<String, Integer>>> broadcastState = ctx.getBroadcastState(descriptor);
