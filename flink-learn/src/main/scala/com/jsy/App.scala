@@ -129,8 +129,6 @@ object App {
     //TODO ===实时频道热点统计分析
     ChannelHotTask.process(clickLogWideDS)
 
-    TestCreatTask.process(clickLogWideDS)
-
     //TODO ===实时各个频道各个时间段的PvUv
     ChannelPvUvTask.process(clickLogWideDS)
 
