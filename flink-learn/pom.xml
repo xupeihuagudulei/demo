@@ -40,6 +40,8 @@
             <artifactId>flink-clients_2.12</artifactId>
             <version>${flink.version}</version>
         </dependency>
+
+        <!-- 实际中导入scala依赖就不需要导入java依赖了，因为scala底层依赖java-->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-scala_2.12</artifactId>
