@@ -12,7 +12,10 @@ import org.apache.flink.streaming.api.windowing.time.Time
  */
 object ChannelPvUvTask {
 
-  case class ChannelRealPvUv(channelId: String, monthDayHour: String, pv: Long, uv: Long)
+  case class ChannelRealPvUv(channelId: String,
+                             monthDayHour: String,
+                             pv: Long,
+                             uv: Long)
 
   def process(clickLogWideDS: DataStream[ClickLogWide]) = {
     //对于一条日志信息进来需要统计各个时间段(月/日/小时--3个维度)的结果,也就是一条进来多条出去
