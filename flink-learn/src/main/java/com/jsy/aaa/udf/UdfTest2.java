@@ -17,7 +17,7 @@ import static org.apache.flink.table.api.Expressions.$;
  * @Author: jsy
  * @Date: 2021/5/6 23:32
  */
-public class UseUdfTest2 {
+public class UdfTest2 {
 
     public static void main(String[] args) throws Exception {
         //TODO 0.env
@@ -26,10 +26,10 @@ public class UseUdfTest2 {
         StreamTableEnvironment tenv = StreamTableEnvironment.create(env, settings);
 
         //TODO 1.source
-        DataStream<UseUdfTest2.WC> wordsDS = env.fromElements(
-                new UseUdfTest2.WC("Hello", 1, 3),
-                new UseUdfTest2.WC("World", 1, 4),
-                new UseUdfTest2.WC("HelloWorld", 1, 5)
+        DataStream<UdfTest2.WC> wordsDS = env.fromElements(
+                new UdfTest2.WC("Hello", 1, 3),
+                new UdfTest2.WC("World", 1, 4),
+                new UdfTest2.WC("HelloWorld", 1, 5)
         );
 
         //TODO 2.transformation
@@ -41,7 +41,7 @@ public class UseUdfTest2 {
         Table wordWithCount = tenv.sqlQuery("SELECT * FROM t_words WHERE IsStatusFive(status)");
 
         //转为DataStream
-        tenv.toRetractStream(wordWithCount, UseUdfTest2.WC.class).print();// 有聚合，肯定有更新，不能用append
+        tenv.toRetractStream(wordWithCount, UdfTest2.WC.class).print();// 有聚合，肯定有更新，不能用append
 
         //TODO 4.execute
         env.execute();

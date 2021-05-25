@@ -17,7 +17,7 @@ import static org.apache.flink.table.api.Expressions.$;
  *
  * https://blog.51cto.com/mapengfei/2572888
  */
-public class UseUdfTest {
+public class UdfTest {
 
     private static String stringLengthUdf = "CREATE FUNCTION stringLengthUdf AS 'com.jsy.aaa.udf.StringLengthUdf'";
 
@@ -61,16 +61,25 @@ public class UseUdfTest {
         EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
         StreamTableEnvironment tenv = StreamTableEnvironment.create(env, settings);
 
-        tenv.executeSql(stringLengthUdf);
+        /**
+         * 标量函数
+         */
+        tenv.registerFunction("stringLengthUdf", new StringLengthUdf());
+
+
+        // tenv.registerFunction("isEmpty", new isEmpty());
+        // tenv.registerFunction("decryptData", new decryptData());
+
+        // tenv.executeSql(stringLengthUdf);
         // tenv.executeSql(sls_stream);
         // tenv.executeSql(rds_output_create);
         // tenv.executeSql(rds_output);
 
         //TODO 1.source
-        DataStream<UseUdfTest.WC> wordsDS = env.fromElements(
-                new UseUdfTest.WC("Hello", 1),
-                new UseUdfTest.WC("World", 1),
-                new UseUdfTest.WC("HelloWorld", 1)
+        DataStream<UdfTest.WC> wordsDS = env.fromElements(
+                new UdfTest.WC("Hello", 1),
+                new UdfTest.WC("World", 1),
+                new UdfTest.WC("HelloWorld", 1)
         );
 
         //TODO 2.transformation
@@ -100,7 +109,7 @@ public class UseUdfTest {
          * count() group by时，必须使用缩进模式。
          */
         //转为DataStream
-        tenv.toRetractStream(resultTable, UseUdfTest.WCWithLength.class).print();// 有聚合，肯定有更新，不能用append
+        tenv.toRetractStream(resultTable, UdfTest.WCWithLength.class).print();// 有聚合，肯定有更新，不能用append
 
         //TODO 4.execute
         env.execute();
