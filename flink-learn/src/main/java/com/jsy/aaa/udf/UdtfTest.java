@@ -10,6 +10,7 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 
 import static org.apache.flink.table.api.Expressions.$;
+import static org.apache.flink.table.api.Expressions.call;
 
 /**
  * https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/dev/table/tableapi/#inner-join-with-table-function-udtf
@@ -44,12 +45,12 @@ public class UdtfTest {
 
         //TODO 2.transformation
         // todo 2.1 table
-        // Table table = tenv.fromDataStream(wordsDS);
-        // table.printSchema();
-        //
-        // Table select = table.joinLateral(call("customTypeSplit", $("device")).as("device1", "size"))
-        //         .select($("word"), $("device1"), $("size"));
-        // tenv.toRetractStream(select, UdtfTest.WCWithLength.class).print();
+        Table table = tenv.fromDataStream(wordsDS);
+        table.printSchema();
+
+        Table select = table.joinLateral(call("customTypeSplit", $("device")).as("device1", "size"))
+                .select($("word"), $("device1"), $("size"));
+        tenv.toRetractStream(select, UdtfTest.WCWithLength.class).print();
 
 
         // todo 2.2 sql
