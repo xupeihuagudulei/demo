@@ -1,0 +1,10 @@
+package ruls
+
+import com.jsy.drools.Person;
+
+rule "Hello World"
+    when
+       b:Person( age >= 18 );
+    then
+        System.out.println("==================person================"+ b.getAge());
+end
