@@ -1,10 +1,16 @@
+// 规则逻辑路径
 package ruls
 
 import com.jsy.drools.Person;
 
+// 规则引擎脚本中可以写java代码，因为Drools是基于java开发的
+
+// rule表示规则开始  Hello World 规则名
 rule "Hello World"
-    when
+    when // 条件
        b:Person( age >= 18 );
-    then
+    then // 规则返回结果
         System.out.println("==================person================"+ b.getAge());
+
+// end表示规则结束
 end
