@@ -1,15 +1,23 @@
-// 规则逻辑路径
+// 规则逻辑路径 必填，理论上可以随便定义，建议和java相同
 package ruls
 
+// 引用静态方法时，要添加 function 关键字
 import com.jsy.drools.Person;
 
 // 规则引擎脚本中可以写java代码，因为Drools是基于java开发的
 
-// rule表示规则开始  Hello World 规则名
-rule "Hello World"
-    when // 条件
+// rule表示规则开始  Hello World 规则名  建议驼峰，可以不加双引号，但是建议加双引号，以避免出现编译报错问题
+// 同一个规则库中相同逻辑路径下的规则名不可相同
+rule "HelloWorld"
+    when // 条件 可以包含0-n个条件    LHS left hand side
+       // 这里如果为空，则默认为true，表示 eval(true)
        b:Person( age >= 18 );
-    then // 规则返回结果
+    then // 规则返回结果              RHS right hand side
+        /**
+        * 处理业务部分
+        * 要处理和返回业务结果的部分
+        * 可以直接编写java代码，不建议有条件判断，条件判断建议写到 LHS 中
+        */
         System.out.println("==================person================"+ b.getAge());
 
 // end表示规则结束

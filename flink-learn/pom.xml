@@ -300,7 +300,7 @@
         </dependency>
 
 
-        <!-- drools -->
+        <!-- drools 对规则进行编译，构建 -->
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-compiler</artifactId>

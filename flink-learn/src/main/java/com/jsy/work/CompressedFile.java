@@ -2,6 +2,8 @@ package com.jsy.work;
 
 import com.github.luben.zstd.Zstd;
 
+import java.nio.charset.Charset;
+
 /**
  * zstd 压缩算法demo
  *
@@ -23,7 +25,7 @@ public class CompressedFile {
     public static void main(String[] args) {
         String str = "abcd";
         // 压缩
-        byte[] compress = Zstd.compress(str.getBytes());
+        byte[] compress = Zstd.compress(str.getBytes(Charset.defaultCharset()));
 
         // 解压缩
         byte[] compressArray = compress;
