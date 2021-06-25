@@ -31,6 +31,11 @@ import java.util.stream.Collectors;
 /export/server/kafka/bin/kafka-console-producer.sh --broker-list node1:9092 --topic flink_kafka
 
 /export/server/kafka/bin/kafka-console-producer.sh --broker-list node1:9092 --topic flink_kafka2
+
+Yarn集群跑起来  需要改文件读取路径，传全量的包
+/export/server/flink/bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
+/export/server/flink/bin/flink run --class com.jsy.work.MultiKafkaConsumer /root/MultiKafkaConsumer.jar
+
  */
 @Slf4j
 public class MultiKafkaConsumer {
@@ -70,7 +75,7 @@ public class MultiKafkaConsumer {
     private static DataStream<String> initKafkaDS(StreamExecutionEnvironment env) {
 
         DataStream<String> kafkaDS = null;
-        Path path = new Path("E:\\GitHub\\demo\\flink-learn\\src\\main\\resources\\kafka.conf");
+        Path path = new Path("/root/kafka.conf");
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(path.getFileSystem().open(path), StandardCharsets.UTF_8);
@@ -97,7 +102,7 @@ public class MultiKafkaConsumer {
                 props.setProperty(entry.getKey(), entry.getValue().unwrapped().toString());
             }
 
-            System.out.println("topic conf" + topic + ":");
+            System.out.println("topic " + topic + " : ");
             for (Map.Entry<Object, Object> propEntry : props.entrySet()) {
                 System.out.println(propEntry.getKey() + "----------" + propEntry.getValue());
             }

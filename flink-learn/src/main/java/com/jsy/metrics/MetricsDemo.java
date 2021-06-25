@@ -66,7 +66,14 @@ public class MetricsDemo {
         env.execute();
     }
 }
-// nc -lk 9999
-// /export/server/flink/bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
-// /export/server/flink/bin/flink run --class com.jsy.metrics.MetricsDemo /root/metrics.jar
-// 查看WebUI
+
+/*
+Yarn集群跑起来
+
+nc -lk 9999
+/export/server/flink/bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
+/export/server/flink/bin/flink run --class com.jsy.metrics.MetricsDemo /root/metrics.jar
+查看WebUI
+
+
+* */

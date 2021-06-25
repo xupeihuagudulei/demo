@@ -48,7 +48,8 @@ import java.util.Properties;
  * @Author: jsy
  * @Date: 2021/3/28 21:04
  */
-public class CheckpointDemo01 {
+public class
+CheckpointDemo01 {
     public static void main(String[] args) throws Exception {
         //1.env
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -138,3 +139,24 @@ public class CheckpointDemo01 {
         // /export/server/kafka/bin/kafka-console-consumer.sh --bootstrap-server node1:9092 --topic flink_kafka
     }
 }
+/*
+Yarn集群跑起来
+# 启动yarn session
+/export/server/flink/bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
+
+# 另起一个窗口  运行job-会自动执行Checkpoint
+/export/server/flink/bin/flink run --class com.jsy.checkpoint.CheckpointDemo01 /root/ckp.jar
+
+# 手动创建savepoint--相当于手动做了一次Checkpoint  这个要自己去yarn的flink页面上找
+/export/server/flink/bin/flink savepoint a2ebdf1ef8e97eaea791af647b01845a hdfs://node1:8020/flink-checkpoint/savepoint/
+
+# 停止job
+/export/server/flink/bin/flink cancel a2ebdf1ef8e97eaea791af647b01845a
+
+# 重新启动job,手动加载savepoint数据
+/export/server/flink/bin/flink run -s hdfs://node1:8020/flink-checkpoint/savepoint/savepoint-a2ebdf-40ac0511e6d9 --class com.jsy.checkpoint.CheckpointDemo01 /root/ckp.jar
+
+# 停止yarn session
+yarn application -kill application_1607782486484_0014
+
+* */
