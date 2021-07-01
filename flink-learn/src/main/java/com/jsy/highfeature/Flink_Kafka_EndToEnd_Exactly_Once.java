@@ -53,6 +53,9 @@ xixi
 */
 public class Flink_Kafka_EndToEnd_Exactly_Once {
     public static void main(String[] args) throws Exception {
+
+        // 设置系统环境变量
+        System.setProperty("aa", "aa");
         //TODO 0.env
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setRuntimeMode(RuntimeExecutionMode.AUTOMATIC);
