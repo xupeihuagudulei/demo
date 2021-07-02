@@ -11,6 +11,9 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import java.util.Random;
 
 /**
+ * 官方打印
+ * https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/connectors/table/print/
+ *
  * @Author: jsy
  * @Date: 2021/7/1 23:47
  */

@@ -6,6 +6,8 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 /**
  * https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/connectors/table/kafka/
  *
+ * https://ci.apache.org/projects/flink/flink-docs-release-1.13/docs/connectors/table/print/
+ *
  * @Author: jsy
  * @Date: 2021/7/1 23:30
  */
@@ -34,13 +36,21 @@ public class SqlFromKafka {
             "  `ts` STRING\n" +
             ") with ('connector' = 'print' )";
 
+    private static final String GENERAL_PRINT_SINK_SQL = "CREATE TABLE print_table WITH ('connector' = 'print')\n" +
+            "LIKE KafkaTable (EXCLUDING ALL)";
+
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tableEnvironment = StreamTableEnvironment.create(env);
 
         tableEnvironment.executeSql(kafkaTable);
-        tableEnvironment.executeSql(PRINT_SINK_SQL);
-        tableEnvironment.executeSql("insert into sink_print select * from KafkaTable");
+        // tableEnvironment.executeSql(PRINT_SINK_SQL);
+        // tableEnvironment.executeSql("insert into sink_print select * from KafkaTable");
+
+        tableEnvironment.executeSql(GENERAL_PRINT_SINK_SQL);
+        tableEnvironment.executeSql("insert into print_table select * from KafkaTable");
+
+
 
         // try {
         //     env.execute();
