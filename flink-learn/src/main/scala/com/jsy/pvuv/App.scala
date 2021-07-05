@@ -1,5 +1,12 @@
 package com.jsy.pvuv
 
+import java.lang
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
+
+import com.jsy.pvuv.bean.{ClickLog, ClickLogWide, Message}
+import com.jsy.pvuv.task.{ChannelHotTask, ChannelPvUvTask, DataToWideTask}
 import com.alibaba.fastjson.{JSON, JSONObject}
 import org.apache.commons.lang3.SystemUtils
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
@@ -31,8 +38,7 @@ object App {
     //设置State状态存储介质/状态后端
     if (SystemUtils.IS_OS_WINDOWS) {
       env.setStateBackend(new FsStateBackend("file:///D:/ckp"))
-    }
-    else {
+    } else {
       env.setStateBackend(new FsStateBackend("hdfs://node1:8020/flink-checkpoint/checkpoint"))
     }
     //===========类型2:建议参数===========
@@ -113,11 +119,12 @@ object App {
     })
     //messageDS.print()
     //Message(ClickLog(12,7,12,china,HeNan,LuoYang,电信,必应跳转,qq浏览器,1577876460000,1577898060000,19),1,1611283392078)
-    val messageDSWithWatermark: DataStream[Message] = messageDS.assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness[Message](Duration.ofSeconds(5))
-      .withTimestampAssigner(new SerializableTimestampAssigner[Message] {
-        override def extractTimestamp(element: Message, recordTimestamp: Long): Long = element.timeStamp
-      })
-    )
+    val messageDSWithWatermark: DataStream[Message] = messageDS
+      .assignTimestampsAndWatermarks(WatermarkStrategy.forBoundedOutOfOrderness[Message](Duration.ofSeconds(5))
+        .withTimestampAssigner(new SerializableTimestampAssigner[Message] {
+          override def extractTimestamp(element: Message, recordTimestamp: Long): Long = element.timeStamp
+        })
+      )
 
     //TODO ===数据预处理-将Message拓宽为ClickLogWide
     val clickLogWideDS: DataStream[ClickLogWide] = DataToWideTask.process(messageDSWithWatermark)
