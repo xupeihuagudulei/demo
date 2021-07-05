@@ -1,7 +1,7 @@
-package com.jsy.task
+package com.jsy.pvuv.task
 
-import com.jsy.bean.ClickLogWide
-import com.jsy.util.HBaseUtil
+import com.jsy.pvuv.bean.ClickLogWide
+import com.jsy.pvuv.util.HBaseUtil
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.streaming.api.functions.sink.SinkFunction
 import org.apache.flink.streaming.api.scala.DataStream

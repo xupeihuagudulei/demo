@@ -1,12 +1,5 @@
-package com.jsy
+package com.jsy.pvuv
 
-import java.lang
-import java.time.Duration
-import java.util.Properties
-import java.util.concurrent.TimeUnit
-
-import com.jsy.bean.{ClickLog, ClickLogWide, Message}
-import com.jsy.task.{ChannelHotTask, ChannelPvUvTask, DataToWideTask}
 import com.alibaba.fastjson.{JSON, JSONObject}
 import org.apache.commons.lang3.SystemUtils
 import org.apache.flink.api.common.eventtime.{SerializableTimestampAssigner, WatermarkStrategy}
@@ -16,8 +9,12 @@ import org.apache.flink.api.common.time.Time
 import org.apache.flink.runtime.state.filesystem.FsStateBackend
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig
-import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
+import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+
+import java.time.Duration
+import java.util.Properties
+import java.util.concurrent.TimeUnit
 
 /**
  * Desc scala-flink程序入口类

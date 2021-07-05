@@ -1,4 +1,4 @@
-package com.jsy.mock;
+package com.jsy.pvuv.mock;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

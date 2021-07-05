@@ -1,4 +1,4 @@
-package com.jsy.util
+package com.jsy.pvuv.util
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.hbase.client._

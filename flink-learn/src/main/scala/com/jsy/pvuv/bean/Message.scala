@@ -1,4 +1,4 @@
-package com.jsy.bean
+package com.jsy.pvuv.bean
 
 /**
  * @Author: jsy
