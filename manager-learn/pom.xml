@@ -22,6 +22,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!--springboot的redis集成-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

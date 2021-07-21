@@ -8,6 +8,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.types.Row;
 
 import static org.apache.flink.table.api.Expressions.$;
 import static org.apache.flink.table.api.Expressions.call;
@@ -46,11 +47,20 @@ public class UdtfTest {
         //TODO 2.transformation
         // todo 2.1 table
         Table table = tenv.fromDataStream(wordsDS);
-        table.printSchema();
+        tenv.toRetractStream(table, Row.class).print("******");
 
+        /**
+         * 可以起别名，select  两种写法都可
+         */
         Table select = table.joinLateral(call("customTypeSplit", $("device")).as("device1", "size"))
-                .select($("word"), $("device1"), $("size"));
-        tenv.toRetractStream(select, UdtfTest.WCWithLength.class).print();
+                .select($("word"), $("device1"), $("size")).as("aa,bb,cc");
+                // .select("word,device1,size");
+
+        System.out.println("schema----");
+        select.printSchema();
+        System.out.println("schema end----");
+
+        tenv.toRetractStream(select, Row.class).print("##########");
 
 
         // todo 2.2 sql

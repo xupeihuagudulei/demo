@@ -15,6 +15,12 @@ import java.util.Arrays;
  * @Author: jsy
  * @Date: 2021/3/22 12:42
  */
+
+/*
+
+per-job模式，1.12可以提交，1.13没调通
+/export/server/flink/bin/flink run -Dexecution.runtime-mode=BATCH -m yarn-cluster -yjm 1024 -ytm 1024 -c com.jsy.helloword.WordCount5Yarn /root/jar/wc.jar --output hdfs://node1:8020/wordcount/output_xx
+*/
 public class WordCount5Yarn {
 
     public static void main(String[] args) throws Exception {

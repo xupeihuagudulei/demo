@@ -36,6 +36,10 @@ Yarn集群跑起来  需要改文件读取路径，传全量的包
 /export/server/flink/bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
 /export/server/flink/bin/flink run --class com.jsy.work.MultiKafkaConsumer /root/MultiKafkaConsumer.jar
 
+-- 没通
+/export/server/flink/bin/flink run -d --yarnname jsy-test --yarnship /export/server/flink/lib -yD env.java.opts="-Xloggc:<LOG_DIR>/gc.log -XX:+PrintGCDetails -XX:-OmitStackTraceInFastThrow -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20M"  --jobmanager yarn-cluster --class com.jsy.work.MultiKafkaConsumer /root/jar/flink-learn-1.0-SNAPSHOT.jar
+
+
  */
 @Slf4j
 public class MultiKafkaConsumer {
