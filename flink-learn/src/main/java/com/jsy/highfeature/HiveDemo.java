@@ -20,7 +20,9 @@ import org.apache.flink.table.catalog.hive.HiveCatalog;
  */
 
 /*
-insert into person values("1","zhangsan","20");
+/export/server/hive/bin/beeline -u jdbc:hive2://node3:10000 -n node3
+
+insert into person values("1","lisi","20");
 
 * */
 public class HiveDemo {

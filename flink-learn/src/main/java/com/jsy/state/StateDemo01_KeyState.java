@@ -47,36 +47,37 @@ public class StateDemo01_KeyState {
         DataStream<Tuple2<String, Long>> result1 = tupleDS.keyBy(t -> t.f0).maxBy(1);
 
         //学习时可以使用KeyState中的ValueState来实现maxBy的底层
-        DataStream<Tuple3<String, Long, Long>> result2 = tupleDS.keyBy(t -> t.f0).map(new RichMapFunction<Tuple2<String, Long>, Tuple3<String, Long, Long>>() {
-            //-1.定义一个状态用来存放最大值
-            private ValueState<Long> maxValueState;
+        DataStream<Tuple3<String, Long, Long>> result2 = tupleDS.keyBy(t -> t.f0)
+                .map(new RichMapFunction<Tuple2<String, Long>, Tuple3<String, Long, Long>>() {
+                    //-1.定义一个状态用来存放最大值
+                    private ValueState<Long> maxValueState;
 
-            //-2.状态初始化
-            @Override
-            public void open(Configuration parameters) throws Exception {
-                //创建状态描述器,名字和存的东西
-                ValueStateDescriptor stateDescriptor = new ValueStateDescriptor("maxValueState", Long.class);
-                //根据状态描述器获取/初始化状态
-                maxValueState = getRuntimeContext().getState(stateDescriptor);
-            }
+                    //-2.状态初始化
+                    @Override
+                    public void open(Configuration parameters) throws Exception {
+                        //创建状态描述器,名字和存的东西
+                        ValueStateDescriptor stateDescriptor = new ValueStateDescriptor("maxValueState", Long.class);
+                        //根据状态描述器获取/初始化状态
+                        maxValueState = getRuntimeContext().getState(stateDescriptor);
+                    }
 
-            //-3.使用状态
-            @Override
-            public Tuple3<String, Long, Long> map(Tuple2<String, Long> value) throws Exception {
-                Long currentValue = value.f1;
-                //获取状态
-                Long historyValue = maxValueState.value();
-                //判断状态
-                if (historyValue == null || currentValue > historyValue) {
-                    historyValue = currentValue;
-                    //更新状态
-                    maxValueState.update(historyValue);
-                    return Tuple3.of(value.f0, currentValue, historyValue);
-                } else {
-                    return Tuple3.of(value.f0, currentValue, historyValue);
-                }
-            }
-        });
+                    //-3.使用状态
+                    @Override
+                    public Tuple3<String, Long, Long> map(Tuple2<String, Long> value) throws Exception {
+                        Long currentValue = value.f1;
+                        //获取状态
+                        Long historyValue = maxValueState.value();
+                        //判断状态
+                        if (historyValue == null || currentValue > historyValue) {
+                            historyValue = currentValue;
+                            //更新状态
+                            maxValueState.update(historyValue);
+                            return Tuple3.of(value.f0, currentValue, historyValue);
+                        } else {
+                            return Tuple3.of(value.f0, currentValue, historyValue);
+                        }
+                    }
+                });
 
         //TODO 3.sink
         result1.print("result1--->");

@@ -83,7 +83,8 @@ public class BroadcastStateDemo {
                         >() {
                     //处理事件流中的每一个元素
                     @Override
-                    public void processElement(Tuple4<String, String, String, Integer> value, ReadOnlyContext ctx, Collector<Tuple6<String, String, String, Integer, String, Integer>> out) throws Exception {
+                    public void processElement(Tuple4<String, String, String, Integer> value, ReadOnlyContext ctx,
+                                               Collector<Tuple6<String, String, String, Integer, String, Integer>> out) throws Exception {
                         //value就是事件流中的数据
                         //<userID, eventTime, eventType, productID> //事件流--已经有了
                         //Tuple4<String, String, String, Integer>,
