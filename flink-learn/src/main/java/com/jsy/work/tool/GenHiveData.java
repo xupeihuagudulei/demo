@@ -2,7 +2,9 @@ package com.jsy.work.tool;
 
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.SqlDialect;
+import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.table.catalog.hive.HiveCatalog;
 
 /**
  * @Author: jsy
@@ -28,6 +30,8 @@ TBLPROPERTIES (
   'bucketing_version'='2',
   'transient_lastDdlTime'='1628006493')
 
+
+insert into t_metric partition(pt_d=20210808) values("aa","bb");
 * */
 public class GenHiveData {
 
@@ -79,21 +83,45 @@ public class GenHiveData {
             "   'table-name'='wide_table'\n" +
             ")";
 
+    private static String hiveTable = "CREATE TABLE hive_table (\n" +
+            "  `user_id` STRING\n" +
+            "  ,`metric` STRING\n" +
+            ") PARTITIONED BY (`pt_d` STRING) STORED AS orc TBLPROPERTIES (\n" +
+            // "  'sink.partition-commit.trigger'='partition-time',\n" +
+            // "  'sink.partition-commit.delay'='1 min',\n" +
+            // "  'sink.partition-commit.policy.kind'='metastore,success-file'\n" +
+            ")";
+
+
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        StreamTableEnvironment tEvn = StreamTableEnvironment.create(env);
-
-        tEvn.executeSql(kafkaTable);
+        StreamTableEnvironment tEnv = StreamTableEnvironment.create(env);
+        // tEnv.executeSql(kafkaTable);
         // tevn.executeSql(PRINT_SINK_SQL);
         // tevn.executeSql("insert into sink_print select * from KafkaTable");
 
-        tEvn.executeSql(GENERAL_PRINT_SINK_SQL);
-        tEvn.executeSql("insert into print_table select * from KafkaTable");
+        // tEnv.executeSql(GENERAL_PRINT_SINK_SQL);
+        // tEnv.executeSql("insert into print_table select * from KafkaTable");
 
+        //构造hive catalog
+        String name = "myhive";
+        String defaultDatabase = "default";
+        String hiveConfDir = "./conf";
+        // String version = "3.1.2";
 
-        tEvn.getConfig().setSqlDialect(SqlDialect.HIVE);
+        HiveCatalog hive = new HiveCatalog(name, defaultDatabase, hiveConfDir);
+        tEnv.registerCatalog("myhive", hive);
+        tEnv.useCatalog("myhive");
+        tEnv.getConfig().setSqlDialect(SqlDialect.HIVE);
+        tEnv.useDatabase("default");
 
-        tEvn.getConfig().setSqlDialect(SqlDialect.DEFAULT);
+        TableResult tableResult = tEnv.executeSql("select * from t_metric");
+        System.out.println("tableResult = " + tableResult);
+
+        // tEnv.executeSql("insert into t_metric partition(pt_d=20210807) " +
+        //         "select user_id,item_id as metric from `myhive`.`default`.`KafkaTable`");
+
+        // tEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
 
 
 

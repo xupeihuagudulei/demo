@@ -1,8 +1,8 @@
 package com.jsy.highfeature;
 
 import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
-import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.catalog.hive.HiveCatalog;
 
 /**
@@ -44,9 +44,17 @@ public class HiveDemo {
         tableEnv.useCatalog("myhive");
 
         //向Hive表中写入数据
-        String insertSQL = "insert into person select * from person";
-        TableResult result = tableEnv.executeSql(insertSQL);
+        // String insertSQL = "insert into person select * from person";
+        // TableResult result = tableEnv.executeSql(insertSQL);
+        // System.out.println(result.getJobClient().get().getJobStatus());
 
-        System.out.println(result.getJobClient().get().getJobStatus());
+
+
+
+        String insertSQL = "select * from person";
+        Table table = tableEnv.sqlQuery(insertSQL);
+
+        System.out.println(table);
+
     }
 }
