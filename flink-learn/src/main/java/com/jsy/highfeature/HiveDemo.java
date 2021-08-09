@@ -1,9 +1,11 @@
 package com.jsy.highfeature;
 
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
-import org.apache.flink.table.api.TableEnvironment;
+import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.catalog.hive.HiveCatalog;
+import org.apache.flink.types.Row;
 
 /**
  * 验证成功
@@ -14,6 +16,7 @@ import org.apache.flink.table.catalog.hive.HiveCatalog;
  *
  * https://ci.apache.org/projects/flink/flink-docs-release-1.12/dev/table/connectors/hive/
  * https://zhuanlan.zhihu.com/p/338506408
+ * https://ci.apache.org/projects/flink/flink-docs-release-1.9/dev/table/hive/read_write_hive.html
  *
  * @Author: jsy
  * @Date: 2021/4/18 20:36
@@ -28,8 +31,12 @@ insert into person values("1","lisi","20");
 public class HiveDemo {
     public static void main(String[] args){
         //TODO 0.env
-        EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().build();
-        TableEnvironment tableEnv = TableEnvironment.create(settings);
+        // EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().build();
+        // TableEnvironment tableEnv = TableEnvironment.create(settings);
+
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
+        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
 
         //TODO 指定hive的配置
         String name            = "myhive";
@@ -53,6 +60,8 @@ public class HiveDemo {
 
         String insertSQL = "select * from person";
         Table table = tableEnv.sqlQuery(insertSQL);
+        tableEnv.toRetractStream(table, Row.class).print();
+
 
         System.out.println(table);
 

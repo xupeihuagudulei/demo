@@ -1,6 +1,5 @@
 package com.jsy.work.refactor;
 
-import com.jsy.source.Source04CustomerMySQL;
 import com.jsy.work.util.JacksonUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.flink.api.common.RuntimeExecutionMode;
@@ -19,6 +18,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.ConnectedStreams;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
@@ -113,7 +113,19 @@ public class RefactorFlink {
 
         configStream.print("broad cast end");
 
-        DataStream<Source04CustomerMySQL.Student> hiveSource = env.addSource(new HiveSource());
+        DataStreamSource<Map<String, HiveEntity>> hiveSource = env.addSource(new HiveSource());
+
+        hiveSource.print("hive===");
+
+        configStream.keyBy(t -> t.getUserBehavior().getUserId()).connect(hiveSource.keyBy(Map::keySet))
+                .process(new CoProcess());
+
+
+
+
+
+
+
 
         DataStream<Tuple2<String, Long>> tupleDS = env.fromElements(
                 Tuple2.of("北京", 1L),
@@ -227,41 +239,42 @@ public class RefactorFlink {
         }
     }
 
-    public static class HiveSource extends RichParallelSourceFunction<Source04CustomerMySQL.Student> {
+    public static class HiveSource extends RichParallelSourceFunction<Map<String, HiveEntity>> {
         private boolean flag = true;
         private Connection conn = null;
         private PreparedStatement ps = null;
         private ResultSet rs = null;
 
-        //open只执行一次,适合开启资源
         @Override
         public void open(Configuration parameters) throws Exception {
             conn = DriverManager.getConnection("jdbc:mysql://node3:3306/bigdata", "root", "123456");
-            String sql = "select id,name,age from t_student";
+            String sql = "select `user_id`, `metric`,`pt_d` from `t_hive`";
             ps = conn.prepareStatement(sql);
         }
 
         @Override
-        public void run(SourceContext<Source04CustomerMySQL.Student> ctx) throws Exception {
+        public void run(SourceContext<Map<String, HiveEntity>> ctx) throws Exception {
             while (flag) {
-                rs = ps.executeQuery();//执行查询
+
+                Map<String, HiveEntity> map = new HashMap<>();
+                ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String name = rs.getString("name");
-                    int age = rs.getInt("age");
-                    ctx.collect(new Source04CustomerMySQL.Student(id, name, age));
+                    String userId = rs.getString("user_id");
+                    int metric = rs.getInt("metric");
+                    String ptD = rs.getString("pt_d");
+                    //Map<String, Tuple2<String, Integer>>
+                    map.put(userId, new HiveEntity(userId, metric, ptD));
                 }
-                Thread.sleep(5000);
+                ctx.collect(map);
+                Thread.sleep(5000);//每隔5s更新一下用户的配置信息!
             }
         }
 
-        //接收到cancel命令时取消数据生成
         @Override
         public void cancel() {
             flag = false;
         }
 
-        //close里面关闭资源，也可以在cancel中关
         @Override
         public void close() throws Exception {
             if (conn != null) conn.close();
