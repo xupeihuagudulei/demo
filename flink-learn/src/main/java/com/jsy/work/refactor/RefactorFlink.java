@@ -120,8 +120,9 @@ public class RefactorFlink {
         configStream.keyBy(t -> t.getUserBehavior().getUserId()).connect(hiveSource.keyBy(Map::keySet))
                 .process(new CoProcess());
 
-
-
+        // process 底层就是调用的transform
+        // configStream.keyBy(t -> t.getUserBehavior().getUserId()).connect(hiveSource.keyBy(Map::keySet))
+        //         .transform(new TwoInput());
 
 
 

@@ -24,15 +24,15 @@ object SqlLocal {
     val tenv: StreamTableEnvironment = StreamTableEnvironment.create(env, settings)
 
     //TODO 1.source
-    val orderA: DataStream[Demo01.Order] = env.
-      fromCollection(Array(new Demo01.Order(1L, "beer", 3),
-        new Demo01.Order(1L, "diaper", 4),
-        new Demo01.Order(3L, "rubber", 2)))
+    val orderA: DataStream[Order] = env.
+      fromCollection(Array(new Order(1L, "beer", 3),
+        new Order(1L, "diaper", 4),
+        new Order(3L, "rubber", 2)))
 
-    val orderB: DataStream[Demo01.Order] = env
-      .fromCollection(List(new Demo01.Order(2L, "pen", 3),
-        new Demo01.Order(2L, "rubber", 3),
-        new Demo01.Order(4L, "beer", 1)))
+    val orderB: DataStream[Order] = env
+      .fromCollection(List(new Order(2L, "pen", 3),
+        new Order(2L, "rubber", 3),
+        new Order(4L, "beer", 1)))
 
     //TODO 2.transformation
     // 将DataStream数据转Table和View,然后查询
@@ -62,7 +62,7 @@ select * from tableB where amount > 1
 
     //将Table转为DataStream
     // DataStream<Order> resultDS = tenv.toAppendStream(resultTable, Order.class);//union all使用toAppendStream
-    val resultDS: DataStream[(Boolean, Demo01.Order)] = tenv.toRetractStream(resultTable) //union使用toRetractStream
+    val resultDS: DataStream[(Boolean, Order)] = tenv.toRetractStream(resultTable) //union使用toRetractStream
     //toAppendStream → 将计算后的数据append到结果DataStream中去
     //toRetractStream  → 将计算后的新的数据在DataStream原数据的基础上更新true或是删除false
     //类似StructuredStreaming中的append/update/complete
@@ -75,3 +75,9 @@ select * from tableB where amount > 1
   }
 
 }
+
+case class Order(
+                     user: Long,
+                     product: String,
+                     amount: Int
+                   )

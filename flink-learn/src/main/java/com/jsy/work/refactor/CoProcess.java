@@ -51,5 +51,5 @@ public class CoProcess extends CoProcessFunction<BroadCastStreamOut, Map<String,
 
         hiveState.putAll(value);
 
-    }
+    } 
 }

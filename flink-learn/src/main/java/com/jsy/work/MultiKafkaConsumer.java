@@ -53,7 +53,7 @@ public class MultiKafkaConsumer {
         //准备kafka连接参数
         DataStream<String> kafkaDS = initKafkaDS(env);
 
-        kafkaDS.print("union kafka");
+        kafkaDS.print("union kafka").setParallelism(10);
 
         // //TODO 2.transformation
         // SingleOutputStreamOperator<String> etlDS = kafkaDS.filter(new FilterFunction<String>() {
@@ -79,7 +79,7 @@ public class MultiKafkaConsumer {
     private static DataStream<String> initKafkaDS(StreamExecutionEnvironment env) {
 
         DataStream<String> kafkaDS = null;
-        Path path = new Path("/root/kafka.conf");
+        Path path = new Path("E:\\GitHub\\demo\\flink-learn\\src\\main\\resources\\kafka.conf");
         InputStreamReader inputStreamReader = null;
         try {
             inputStreamReader = new InputStreamReader(path.getFileSystem().open(path), StandardCharsets.UTF_8);
@@ -111,7 +111,7 @@ public class MultiKafkaConsumer {
                 System.out.println(propEntry.getKey() + "----------" + propEntry.getValue());
             }
             FlinkKafkaConsumer<String> kafkaSource = new FlinkKafkaConsumer<>(topic, new SimpleStringSchema(), props);
-            kafkaDSList.add(env.addSource(kafkaSource));
+            kafkaDSList.add(env.addSource(kafkaSource).setParallelism(5));
         }
         if (kafkaDSList.isEmpty()) {
             return kafkaDS;

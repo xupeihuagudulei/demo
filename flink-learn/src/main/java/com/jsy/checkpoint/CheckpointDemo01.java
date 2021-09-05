@@ -34,7 +34,8 @@ import java.util.Properties;
  * - State:
  * <p>
  * 维护/存储的是某一个Operator的运行的状态/历史值,是维护在内存中!
- * 一般指一个具体的Operator的状态(operator的状态表示一些算子在运行的过程中会产生的一些历史结果,如前面的maxBy底层会维护当前的最大值,也就是会维护一个keyedOperator,这个State里面存放就是maxBy这个Operator中的最大值)
+ * 一般指一个具体的Operator的状态(operator的状态表示一些算子在运行的过程中会产生的一些历史结果,如前面的maxBy底层会维护当前的最大值,
+ * 也就是会维护一个keyedOperator,这个State里面存放就是maxBy这个Operator中的最大值)
  * State数据默认保存在Java的堆内存中/TaskManage节点的内存中
  * State可以被记录，在失败的情况下数据还可以恢复
  * <p>
